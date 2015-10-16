@@ -1,3 +1,5 @@
+#packrat::init("/Users/urmovosa/Documents/move_to_mac/ALS/ALS_scripts/")
+
 library(readr)
 library(shape)
 library(biomaRt)
@@ -14,6 +16,9 @@ setwd('/Users/urmovosa/')
 
 GWAS_results <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/mlma_p_for_depict_check.txt')
 
+# repair error
+GWAS_results[GWAS_results$SNP == 'rs75087725', ]$CHR <- '21'
+
 GWAS_results_p10e8 <- GWAS_results[GWAS_results$p < 5e-8, ]
 
 
@@ -24,26 +29,32 @@ chr9_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/
 chr14_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr14_80_proxySearch.results.csv', head = T, sep = '\t')
 chr17_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr17_80_proxySearch.results.csv', head = T, sep = '\t')
 chr19_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr19_80_proxySearch.results.csv', head = T, sep = '\t')
+chr21_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr21_80_proxySearch.results.csv', head = T, sep = '\t')
+
 chr19_proxy <- rbind(chr3_proxy,
                      chr8_proxy,
                      chr9_proxy,
                      chr14_proxy,
                      chr17_proxy,
-                     chr19_proxy)
+                     chr19_proxy,
+                     chr21_proxy)
 
-#LD info
+# LD info
 chr3_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr3_blockannotation.results.csv', head = T, sep = '\t')
 chr8_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr8_blockannotation.results.csv', head = T, sep = '\t')
 chr9_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr9_blockannotation.results.csv', head = T, sep = '\t')
 chr14_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr14_blockannotation.results.csv', head = T, sep = '\t')
 chr17_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr17_blockannotation.results.csv', head = T, sep = '\t')
 chr19_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr19_blockannotation.results.csv', head = T, sep = '\t')
+chr21_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr21_blockannotation.results.csv', head = T, sep = '\t')
+
 all_block <- rbind(chr3_block,
                    chr8_block,
                    chr9_block,
                    chr14_block,
                    chr17_block,
-                   chr19_block)
+                   chr19_block,
+                   chr21_block)
 
 
 chr19_proxy$CHR <- as.character(chr19_proxy$CHR)
@@ -76,7 +87,6 @@ braineac_eQTLs <- data.frame(SNP = braineac_eQTLs$rsid,
                              type = braineac_eQTLs$type)
 
 # Deelen et al. eQTLs
-
 Deelen <- fread('Documents/move_to_mac/ALS/eQLT_data_mining_analyses/Deelen/Deelen_eQTLs.txt')
 Deelen <- data.frame(SNP = Deelen$SNPName, HUGO = Deelen$HGNCName, P = Deelen$FDR, Group = 'Deelen', type = 'transcript_level')
 
@@ -92,21 +102,22 @@ brain_eQTLs <- brain_eQTLs[!is.na(brain_eQTLs$HUGO),]
 Myers <- read.delim('Documents/move_to_mac/ALS/eQLT_data_mining_analyses/Myers/Myers_seeQTL_eQTLs.txt', head = T)
 brain_eQTLs <- rbind(brain_eQTLs, Myers)
 
-# define window
-win <- 500000
 
 
 # locus:
-i <- 19
+i <- 21
 
 for(i in c(3, 8, 9, 14, 17, 19, 21)){
-  
+ 
+  win <- 500000
+  #if (i == 19){win <- 500000} else{win <-250000}
+   
   # pdf(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_for_presentation', i, '.pdf', sep = ''), width = 17/2, height = 10/1.5, useDingbats = F)
-  svg(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_Chromm_2', i, '.svg', sep = ''), width = 17/2, height = 6.5, family = 'Arial')
+  svg(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_Chromm_3', i, '.svg', sep = ''), width = 17/2, height = 6.5, family = 'Arial')
   #CairoFontMatch()
   
   par(mfrow = c(4, 1), mar = c(0.25, 6, 0.25, 3), oma = c(3, 1, 4, 6))
-  layout(matrix(c(1, 2, 3, 4)), heights = c(2.25, 0.6, 0.6, 0.6))
+  layout(matrix(c(1, 2, 3)), heights = c(2.5, 0.6, 0.6))
   
   # chromosome
   chr <- paste('chr', i, sep = '')
@@ -140,7 +151,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   if (length(abi3[!abi3$EQTLGENES %in% '-', ]$shape) > 0) {
     abi3[!abi3$EQTLGENES %in% '-', ]$shape <- 2 }
   
-  # graafik
+  # graph
   gene_coord <- c()
   for (j in c(1, -1)){
     ab <- paste(i, abi$position - win, abi$position + win, j, sep = ':')
@@ -162,8 +173,15 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   gene_coord[gene_coord$strand == '-1', ]$start <- gene_coord[gene_coord$strand == '-1', ]$end_position
   gene_coord[gene_coord$strand == '-1', ]$end <- gene_coord[gene_coord$strand == '-1', ]$start_position
   gene_coord <- gene_coord[, -c(2, 3)]
-  gene_coord <- gene_coord[order(gene_coord$start), ]
-  gene_coord$y <- rep(seq(from = -max(-log10(abi2$p))/12, to = -max(-log10(abi2$p))/3, by = (-max(-log10(abi2$p))/3)/7), 
+  
+  # distribute long genes on different levels
+  
+  gene_coord <- gene_coord %>%
+    rowwise() %>%
+    mutate(middle = min(min(c(start, end))) + (max(c(start, end)) - min(c(start, end)))/1.5, length = (max(c(start, end)) - min(c(start, end))))
+  
+  gene_coord <- gene_coord[order(gene_coord$middle), ]
+  gene_coord$y <- rep(seq(from = -max(-log10(abi2$p))/12, to = -max(-log10(abi2$p))/1.5, by = -(-max(-log10(abi2$p)/1.5) + max(-log10(abi2$p)))/9), 
                       length = nrow(gene_coord))
   
   
@@ -211,7 +229,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   ### NB! Maybe would be better to remove SNPs not present in the 1000G v1
   
   plot(abi2[!abi2$SNP %in% abi3$SNP, ]$position/1000000, -log10(abi2[!abi2$SNP %in% abi3$SNP, ]$p), 
-       ylim = c(-max(-log10(abi2$p))/3, round(max(-log10(abi2$p)) + (max(-log10(abi2$p)* 0.1)), 0)),
+       ylim = c(-max(-log10(abi2$p))/1.5, round(max(-log10(abi2$p)) + (max(-log10(abi2$p)* 0.1)), 0)),
        xlim = c((abi$position - win)/1000000, (abi$position + win)/1000000),
        ylab = '',
        xlab = '',
@@ -228,7 +246,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   box()
   
   
-  #eqtl effect
+  # eqtl effect
   points(abi3$position/1000000, -log10(abi3$p), col = abi3$col, pch = abi3$shape, bg = abi3$col)
   
   
@@ -323,7 +341,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
          cex = 0.6, font = 4, col = ol$col, adj = 0.5)
     
     Arrows(x0 = ol$start/1000000, y0 = ol$y, x1 = ol$end/1000000, 
-           y1 = ol$y, cex = 0.5, arr.length = 7/70, col = ol$col, lwd = 1, arr.type = 'triangle')  
+           y1 = ol$y, cex = 0.6, arr.length = 7/70, col = ol$col, lwd = 1, arr.type = 'triangle')  
     
   }
   
@@ -386,7 +404,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   #lines(c((abi$position + win)/1000000, (abi$position + win)/1000000), c(-50, 50))
   box()
   
-  # add CHOMM data
+  # add CHROHMM data
   # Download states
   
   female_brain <- fread("Documents/move_to_mac/ALS/brain_epigenome_data/core_marks/E082_15_coreMarks_stateno.bed", sep = '\t')
