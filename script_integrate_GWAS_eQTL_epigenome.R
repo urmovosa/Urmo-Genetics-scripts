@@ -14,6 +14,9 @@ setwd('/Users/urmovosa/')
 
 GWAS_results <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/mlma_p_for_depict_check.txt')
 
+# repair error
+GWAS_results[GWAS_results$SNP == 'rs75087725', ]$CHR <- '21'
+
 GWAS_results_p10e8 <- GWAS_results[GWAS_results$p < 5e-8, ]
 
 
@@ -24,12 +27,15 @@ chr9_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/
 chr14_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr14_80_proxySearch.results.csv', head = T, sep = '\t')
 chr17_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr17_80_proxySearch.results.csv', head = T, sep = '\t')
 chr19_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr19_80_proxySearch.results.csv', head = T, sep = '\t')
+chr21_proxy <- read.table('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr21_80_proxySearch.results.csv', head = T, sep = '\t')
+
 chr19_proxy <- rbind(chr3_proxy,
                      chr8_proxy,
                      chr9_proxy,
                      chr14_proxy,
                      chr17_proxy,
-                     chr19_proxy)
+                     chr19_proxy,
+                     chr21_proxy)
 
 #LD info
 chr3_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr3_blockannotation.results.csv', head = T, sep = '\t')
@@ -38,12 +44,15 @@ chr9_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr9_
 chr14_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr14_blockannotation.results.csv', head = T, sep = '\t')
 chr17_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr17_blockannotation.results.csv', head = T, sep = '\t')
 chr19_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr19_blockannotation.results.csv', head = T, sep = '\t')
+chr21_block <- fread('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/chr21_blockannotation.results.csv', head = T, sep = '\t')
+
 all_block <- rbind(chr3_block,
                    chr8_block,
                    chr9_block,
                    chr14_block,
                    chr17_block,
-                   chr19_block)
+                   chr19_block,
+                   chr21_block)
 
 
 chr19_proxy$CHR <- as.character(chr19_proxy$CHR)
@@ -97,7 +106,7 @@ win <- 500000
 
 
 # locus:
-i <- 19
+i <- 21
 
 for(i in c(3, 8, 9, 14, 17, 19, 21)){
   
