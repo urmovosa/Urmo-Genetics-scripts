@@ -181,9 +181,8 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
     mutate(middle = min(min(c(start, end))) + (max(c(start, end)) - min(c(start, end)))/1.5, length = (max(c(start, end)) - min(c(start, end))))
   
   gene_coord <- gene_coord[order(gene_coord$middle), ]
-  gene_coord$y <- rep(seq(from = -max(-log10(abi2$p))/12, to = -max(-log10(abi2$p))/1.5, by = -(-max(-log10(abi2$p)/1.5) + max(-log10(abi2$p)))/9), 
+  gene_coord$y <- rep(seq(from = -max(-log10(abi2$p))/12, to = -max(-log10(abi2$p))/1.4, by = (-max(-log10(abi2$p)/1.4) + max(-log10(abi2$p))/12)/15), 
                       length = nrow(gene_coord))
-  
   
   ###  overlap with brain-eQTL
   abi3$brain_eQTL <- 'no'
