@@ -113,7 +113,7 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
   #if (i == 19){win <- 500000} else{win <-250000}
    
   # pdf(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_for_presentation', i, '.pdf', sep = ''), width = 17/2, height = 10/1.5, useDingbats = F)
-  svg(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_Chromm_3', i, '.svg', sep = ''), width = 17/2, height = 6.5, family = 'Arial')
+  svg(paste('Documents/move_to_mac/ALS/ALS_MLMA_summary_statistics/regional_plots_Chromm_3', i, '.svg', sep = ''), width = 17/2, height = 6.75, family = 'Arial')
   #CairoFontMatch()
   
   par(mfrow = c(4, 1), mar = c(0.25, 6, 0.25, 3), oma = c(3, 1, 4, 6))
@@ -333,7 +333,8 @@ for(i in c(3, 8, 9, 14, 17, 19, 21)){
        cex = 0.5, font = 3, col = ebaol$col, adj = 0.5)
   
   Arrows(x0 = ebaol$start/1000000, y0 = ebaol$y, x1 = ebaol$end/1000000, 
-         y1 = ebaol$y, cex = 0.5, arr.length = 7/70, col = ebaol$col, lwd = 1, arr.type = 'triangle')  
+         y1 = ebaol$y, cex = 0.35, arr.length = 7/70, col = ebaol$col, lwd = 1, arr.type = 'triangle', 
+         arr.lwd = 1.2)  
   
   if (nrow(ol) > 0){
     text(ol$start/1000000, ol$y + korgus/50, 
